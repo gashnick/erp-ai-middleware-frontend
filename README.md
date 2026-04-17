@@ -136,6 +136,6 @@ npm run type-check
 ## Environment Variables
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_WS_URL=ws://localhost:3000
+NEXT_PUBLIC_API_URL=your api url
+NEXT_PUBLIC_WS_URL=uri
 ```
