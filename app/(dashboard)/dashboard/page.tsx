@@ -4,7 +4,7 @@ import { DollarSign, TrendingUp, FileText, AlertCircle } from "lucide-react";
 import { KpiCard } from "@/shared/ui/KpiCard";
 import { RevenueChart } from "@/features/finance/components/RevenueChart";
 import { InvoicesTable } from "@/features/finance/components/InvoicesTable";
-import { useDashboardKpis } from "@/features/finance/hooks/useDashboardKpis";
+import { useDashboardKpis } from "@/features/dashboard/hooks/useDashboardKpis";
 import { formatCompactCurrency } from "@/utils/formatCurrency";
 
 export default function DashboardPage() {

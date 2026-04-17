@@ -1,45 +1,48 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Search } from 'lucide-react'
-import { DataTable, type DataTableColumn } from '@/shared/ui/DataTable'
-import { StatusBadge } from '@/shared/ui/StatusBadge'
-import { formatCurrency } from '@/utils/formatCurrency'
-import { useOrders } from '../hooks/useOps'
-import { useDebounce } from '@/hooks/useDebounce'
-import { cn } from '@/utils/cn'
-import type { Order, OrderStatus } from '../types'
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { DataTable, type DataTableColumn } from "@/shared/ui/DataTable";
+import { StatusBadge } from "@/shared/ui/StatusBadge";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { useOrders } from "../hooks/useOps";
+import { useDebounce } from "@/hooks/useDebounce";
+import { cn } from "@/utils/cn";
+import type { Order, OrderStatus } from "../types";
 
 const STATUS_BADGE_MAP: Record<
   OrderStatus,
-  { label: string; variant: 'success' | 'warning' | 'error' | 'info' | 'neutral' }
+  {
+    label: string;
+    variant: "success" | "warning" | "error" | "info" | "neutral";
+  }
 > = {
-  completed: { label: 'Completed', variant: 'success' },
-  in_progress: { label: 'In Progress', variant: 'info' },
-  confirmed: { label: 'Confirmed', variant: 'warning' },
-  draft: { label: 'Draft', variant: 'neutral' },
-  cancelled: { label: 'Cancelled', variant: 'error' },
-}
+  completed: { label: "Completed", variant: "success" },
+  in_progress: { label: "In Progress", variant: "info" },
+  confirmed: { label: "Confirmed", variant: "warning" },
+  draft: { label: "Draft", variant: "neutral" },
+  cancelled: { label: "Cancelled", variant: "error" },
+};
 
 const PRIORITY_CLASSES: Record<string, string> = {
-  critical: 'text-red-600 font-medium',
-  high: 'text-orange-500 font-medium',
-  medium: 'text-gray-700',
-  low: 'text-gray-400',
-}
+  critical: "text-red-600 font-medium",
+  high: "text-orange-500 font-medium",
+  medium: "text-gray-700",
+  low: "text-gray-400",
+};
 
 const STATUS_TABS: { label: string; value: OrderStatus | undefined }[] = [
-  { label: 'All', value: undefined },
-  { label: 'In Progress', value: 'in_progress' },
-  { label: 'Confirmed', value: 'confirmed' },
-  { label: 'Completed', value: 'completed' },
-  { label: 'Cancelled', value: 'cancelled' },
-]
+  { label: "All", value: undefined },
+  { label: "In Progress", value: "in_progress" },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
+];
 
 const COLUMNS: DataTableColumn<Order>[] = [
   {
-    key: 'orderNumber',
-    label: 'Order #',
+    key: "orderNumber",
+    label: "Order #",
     render: (row) => (
       <span className="font-mono text-xs font-medium text-gray-900">
         {row.orderNumber}
@@ -47,13 +50,13 @@ const COLUMNS: DataTableColumn<Order>[] = [
     ),
   },
   {
-    key: 'customerName',
-    label: 'Customer',
+    key: "customerName",
+    label: "Customer",
     sortable: true,
   },
   {
-    key: 'description',
-    label: 'Description',
+    key: "description",
+    label: "Description",
     render: (row) => (
       <span className="max-w-[200px] truncate block text-sm text-gray-600">
         {row.description}
@@ -61,37 +64,40 @@ const COLUMNS: DataTableColumn<Order>[] = [
     ),
   },
   {
-    key: 'priority',
-    label: 'Priority',
+    key: "priority",
+    label: "Priority",
     render: (row) => (
-      <span className={cn('text-xs capitalize', PRIORITY_CLASSES[row.priority])}>
+      <span
+        className={cn("text-xs capitalize", PRIORITY_CLASSES[row.priority])}
+      >
         {row.priority}
       </span>
     ),
   },
   {
-    key: 'assignedTo',
-    label: 'Assigned',
+    key: "assignedTo",
+    label: "Assigned",
     render: (row) => (
       <span className="text-sm text-gray-600">{row.assignedTo}</span>
     ),
   },
   {
-    key: 'dueDate',
-    label: 'Due',
+    key: "dueDate",
+    label: "Due",
     sortable: true,
     render: (row) => (
       <span className="text-xs text-gray-500">
-        {new Date(row.dueDate).toLocaleDateString('en-US', {
-          month: 'short', day: 'numeric',
+        {new Date(row.dueDate).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
         })}
       </span>
     ),
   },
   {
-    key: 'value',
-    label: 'Value',
-    align: 'right',
+    key: "value",
+    label: "Value",
+    align: "right",
     sortable: true,
     render: (row) => (
       <span className="font-medium tabular-nums text-sm">
@@ -100,25 +106,25 @@ const COLUMNS: DataTableColumn<Order>[] = [
     ),
   },
   {
-    key: 'status',
-    label: 'Status',
+    key: "status",
+    label: "Status",
     render: (row) => {
-      const config = STATUS_BADGE_MAP[row.status]
-      return <StatusBadge label={config.label} variant={config.variant} />
+      const config = STATUS_BADGE_MAP[row.status];
+      return <StatusBadge label={config.label} variant={config.variant} />;
     },
   },
-]
+];
 
 export function OrdersTable() {
-  const [activeStatus, setActiveStatus] = useState<OrderStatus | undefined>()
-  const [search, setSearch] = useState('')
-  const debouncedSearch = useDebounce(search, 300)
+  const [activeStatus, setActiveStatus] = useState<OrderStatus | undefined>();
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data, isLoading, page, setPage, totalPages } = useOrders({
     limit: 15,
     status: activeStatus,
     search: debouncedSearch || undefined,
-  })
+  });
 
   return (
     <div className="flex flex-col gap-3">
@@ -129,12 +135,15 @@ export function OrdersTable() {
             <button
               key={String(tab.value)}
               type="button"
-              onClick={() => { setActiveStatus(tab.value); setPage(1) }}
+              onClick={() => {
+                setActiveStatus(tab.value);
+                setPage(1);
+              }}
               className={cn(
-                'px-3 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
+                "px-3 py-2 text-sm font-medium transition-colors border-b-2 -mb-px",
                 activeStatus === tab.value
-                  ? 'border-blue-600 text-blue-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
+                  ? "border-blue-600 text-blue-700"
+                  : "border-transparent text-gray-500 hover:text-gray-900",
               )}
             >
               {tab.label}
@@ -163,7 +172,9 @@ export function OrdersTable() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <span>Page {page} of {totalPages}</span>
+          <span>
+            Page {page} of {totalPages}
+          </span>
           <div className="flex gap-1">
             <button
               type="button"
@@ -185,5 +196,5 @@ export function OrdersTable() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   BarChart,
@@ -8,25 +8,34 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  type TooltipProps,
-} from 'recharts'
-import { ChartCard } from '@/shared/ui/ChartCard'
-import { useHrKpis } from '../hooks/useHr'
+} from "recharts";
+import { ChartCard } from "@/shared/ui/ChartCard";
+import { useHrKpis } from "../hooks/useHr";
 
-function HeadcountTooltip({ active, payload, label }: TooltipProps<number, string>) {
-  if (!active || !payload?.length) return null
+type TooltipPayload = { department: string; count: number };
+
+function HeadcountTooltip(props: {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: TooltipPayload }>;
+  label?: string;
+}) {
+  if (!props.active || !props.payload?.length) return null;
+  const data = props.payload[0]?.payload as TooltipPayload | undefined;
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-md text-xs">
-      <p className="mb-1 font-medium text-gray-700">{label}</p>
+      <p className="mb-1 font-medium text-gray-700">{data?.department}</p>
       <p className="text-gray-500">
-        Headcount: <span className="font-medium text-gray-900">{payload[0]?.value}</span>
+        Headcount:{" "}
+        <span className="font-medium text-gray-900">
+          {props.payload?.[0]?.value}
+        </span>
       </p>
     </div>
-  )
+  );
 }
 
 export function HeadcountChart() {
-  const { data: kpis, isLoading } = useHrKpis()
+  const { data: kpis, isLoading } = useHrKpis();
 
   return (
     <ChartCard
@@ -40,20 +49,27 @@ export function HeadcountChart() {
           data={kpis?.departmentBreakdown ?? []}
           margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#F3F4F6"
+            vertical={false}
+          />
           <XAxis
             dataKey="department"
-            tick={{ fontSize: 11, fill: '#9CA3AF' }}
+            tick={{ fontSize: 11, fill: "#9CA3AF" }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: '#9CA3AF' }}
+            tick={{ fontSize: 11, fill: "#9CA3AF" }}
             tickLine={false}
             axisLine={false}
             allowDecimals={false}
           />
-          <Tooltip content={<HeadcountTooltip />} cursor={{ fill: '#F9FAFB' }} />
+          <Tooltip
+            content={<HeadcountTooltip />}
+            cursor={{ fill: "#F9FAFB" }}
+          />
           <Bar
             dataKey="count"
             name="Headcount"
@@ -64,5 +80,5 @@ export function HeadcountChart() {
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>
-  )
+  );
 }

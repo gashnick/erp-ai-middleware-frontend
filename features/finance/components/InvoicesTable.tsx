@@ -3,7 +3,7 @@
 import { DataTable, type DataTableColumn } from "@/shared/ui/DataTable";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useInvoices } from "../hooks/useInvoices.ts";
+import { useInvoices } from "../hooks/useInvoices";
 import type { Invoice, InvoiceStatus } from "../types";
 
 const STATUS_BADGE_MAP: Record<

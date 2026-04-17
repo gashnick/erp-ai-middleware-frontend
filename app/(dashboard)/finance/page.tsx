@@ -8,10 +8,10 @@ import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { ChartCard } from "@/shared/ui/ChartCard";
 import { RevenueChart } from "@/features/finance/components/RevenueChart";
 import { useInvoices } from "@/features/finance/hooks/useInvoices";
-import { useDashboardKpis } from "@/features/finance/hooks/useDashboardKpis";
+import { useDashboardKpis } from "../../../features/dashboard/hooks/useDashboardKpis";
 import { formatCurrency, formatCompactCurrency } from "@/utils/formatCurrency";
 import { cn } from "@/utils/cn";
-import type { Invoice, InvoiceStatus } from "@/features/finance/types";
+import type { Invoice, InvoiceStatus } from "../../../features/finance/types";
 
 const STATUS_TABS: { label: string; value: InvoiceStatus | undefined }[] = [
   { label: "All", value: undefined },

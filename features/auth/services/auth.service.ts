@@ -2,11 +2,19 @@ import { apiClient } from "@/lib/api-client";
 import type {
   LoginRequest,
   LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+  CreateTenantRequest,
+  CreateTenantResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from "../types";
 
 export const authService = {
+  async register(payload: RegisterRequest): Promise<RegisterResponse> {
+    return apiClient.post<RegisterResponse>("/auth/register", payload);
+  },
+
   async login(payload: LoginRequest): Promise<LoginResponse> {
     return apiClient.post<LoginResponse>("/auth/login", payload);
   },
@@ -23,5 +31,11 @@ export const authService = {
 
   async getProfile(): Promise<LoginResponse["user"]> {
     return apiClient.get("/auth/me");
+  },
+
+  async createTenant(
+    payload: CreateTenantRequest,
+  ): Promise<CreateTenantResponse> {
+    return apiClient.post<CreateTenantResponse>("/tenants", payload);
   },
 };

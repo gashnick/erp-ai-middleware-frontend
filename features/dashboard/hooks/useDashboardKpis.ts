@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { financeService } from "../../Finance/services/finance.service";
-import type { DashboardKpis } from "../../Finance/types";
+import { financeService } from "../../finance/services/finance.service";
+import type { DashboardKpis } from "../../finance/types";
 
 const STALE_TIME_MS = 30_000;
 

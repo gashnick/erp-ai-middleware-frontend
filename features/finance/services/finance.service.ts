@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 import type { PaginatedResponse } from "@/types/api.types";
-import type {
+import {
   CashBalance,
   DashboardKpis,
   Invoice,

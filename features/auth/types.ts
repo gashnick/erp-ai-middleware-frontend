@@ -9,16 +9,41 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  fullName: string;
+  role: UserRole;
+  phoneNumber: string;
+}
+
+export interface RegisterResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: AuthUser;
+}
+
+export interface CreateTenantRequest {
+  companyName: string;
+  subscriptionPlan: "free" | "pro" | "enterprise";
+}
+
+export interface CreateTenantResponse {
+  accessToken: string;
+  refreshToken: string;
+  tenant: UserTenant;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   role: UserRole;
+  phoneNumber?: string;
   tenants: UserTenant[];
 }
 
-export type UserRole = "superadmin" | "admin" | "manager" | "viewer";
+export type UserRole = "superadmin" | "admin" | "analyst" | "viewer";
 
 export interface UserTenant {
   tenantId: string;

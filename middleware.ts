@@ -1,9 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/login", "/register", "/forgot-password"]);
+const PUBLIC_PATHS = new Set(["/", "/login", "/register", "/forgot-password"]);
 
 const PROTECTED_PREFIX = [
-  "/",
   "/dashboard",
   "/finance",
   "/hr",

@@ -28,7 +28,8 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   cancelled: 'Cancelled',
 }
 
-function OpsTooltip({ active, payload }: TooltipProps<number, string>) {
+function OpsTooltip(props: TooltipProps<number, string>) {
+  const { active, payload } = props as TooltipProps<number, string> & { payload?: Array<{ name: string; value: number }> }
   if (!active || !payload?.length) return null
   const entry = payload[0]
   return (

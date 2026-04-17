@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { financeService } from "../../Finance/services/finance.service";
-import type { RevenueDataPoint } from "../../Finance/types";
+import { financeService } from "../../finance/services/finance.service";
+import type { RevenueDataPoint } from "../../finance/types";
 
 export function useRevenueChart(months: number = 6) {
   return useQuery<RevenueDataPoint[]>({

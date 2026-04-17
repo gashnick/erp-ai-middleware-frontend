@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  type TooltipProps,
 } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { ChartCard } from "@/shared/ui/ChartCard";
@@ -19,7 +18,11 @@ function RevenueTooltip({
   active,
   payload,
   label,
-}: TooltipProps<number, string>) {
+}: {
+  active?: boolean;
+  payload?: Array<{ name?: string; value?: number; color?: string }>;
+  label?: string;
+}) {
   if (!active || !payload?.length) return null;
 
   return (
