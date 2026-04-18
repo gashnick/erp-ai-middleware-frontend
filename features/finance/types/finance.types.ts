@@ -1,47 +1,18 @@
-export type InvoiceStatus = "paid" | "pending" | "overdue" | "draft";
-
-export interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  customerName: string;
-  amount: number;
-  currency: string;
-  status: InvoiceStatus;
-  dueDate: string;
-  issuedAt: string;
-}
+// Finance Dashboard Type Definitions
 
 export interface CashBalance {
-  current: number;
+  balance: number;
   currency: string;
-  changePercentage: number;
-  trend: "up" | "down" | "neutral";
   asOf: string;
-  balance?: number;
-  trendPercent?: number;
+  trend: "up" | "down" | "stable";
+  trendPercent: number;
 }
 
-export interface RevenueDataPoint {
-  month: string;
-  revenue: number;
-  expenses: number;
-}
-
-export interface DashboardKpis {
-  cashBalance: CashBalance;
-  totalRevenue: number;
-  totalExpenses: number;
-  pendingInvoicesCount: number;
-  overdueInvoicesCount: number;
-  revenueChangePercentage: number;
-}
-
-// Extended types for comprehensive dashboard
 export interface KpiMetric {
   label: string;
   value: number;
   currency?: string;
-  trend: number;
+  trend: number; // percentage
   period: string;
   icon?: string;
 }
@@ -51,7 +22,7 @@ export interface RevenueByMonth {
   year: number;
   revenue: number;
   currency: string;
-  label?: string;
+  label?: string; // Formatted label like "Jan 2024"
 }
 
 export interface ExpenseBreakdown {
@@ -64,7 +35,7 @@ export interface ExpenseBreakdown {
 }
 
 export interface InvoiceAging {
-  bucket: string;
+  bucket: string; // "0-30", "31-60", "61-90", "90+"
   count: number;
   amount: number;
   currency: string;
@@ -112,6 +83,19 @@ export interface PeriodOption {
 export interface DateRange {
   from: Date;
   to: Date;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  vendorName?: string;
+  customerName?: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  issuedDate: string;
+  status: "paid" | "unpaid" | "overdue" | "draft";
+  description?: string;
 }
 
 export interface FinanceDashboardFilters {
