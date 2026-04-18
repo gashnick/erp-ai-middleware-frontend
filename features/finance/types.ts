@@ -64,6 +64,7 @@ export interface ExpenseBreakdown {
 }
 
 export interface InvoiceAging {
+  id: string; // bucket key serves as id for DataTable
   bucket: string;
   count: number;
   amount: number;

@@ -5,7 +5,9 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { useInvoiceAging } from "../hooks/useExpenses";
 import { InvoiceAging } from "../types";
 
-const COLUMNS: DataTableColumn<InvoiceAging>[] = [
+type InvoiceAgingRow = InvoiceAging & { id: string };
+
+const COLUMNS: DataTableColumn<InvoiceAgingRow>[] = [
   {
     key: "bucket",
     label: "Days Outstanding",
@@ -65,10 +67,16 @@ export function InvoiceAgingTable() {
     );
   }
 
+  // Map data to ensure id field is present
+  const tableData = (data ?? []).map((item, index) => ({
+    ...item,
+    id: item.bucket,
+  }));
+
   return (
     <DataTable
       columns={COLUMNS}
-      data={data ?? []}
+      data={tableData}
       isLoading={isLoading}
       compact
       title="Invoice Aging"

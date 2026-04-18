@@ -7,6 +7,8 @@ import { formatDate } from "@/utils/formatDate";
 import { useRecentTransactions } from "../hooks/useExpenses";
 import { RecentTransaction } from "../types";
 
+type TransactionRow = RecentTransaction & { id: string };
+
 const STATUS_VARIANT_MAP: Record<
   RecentTransaction["status"],
   "success" | "warning" | "error" | "neutral"
@@ -23,7 +25,7 @@ const TYPE_BADGE_MAP: Record<RecentTransaction["type"], string> = {
   deposit: "Deposit",
 };
 
-const COLUMNS: DataTableColumn<RecentTransaction>[] = [
+const COLUMNS: DataTableColumn<TransactionRow>[] = [
   {
     key: "description",
     label: "Description",
@@ -95,7 +97,7 @@ export function RecentTransactionsTable({
   return (
     <DataTable
       columns={COLUMNS}
-      data={data ?? []}
+      data={(data ?? []) as TransactionRow[]}
       isLoading={isLoading}
       compact
       title="Recent Transactions"
