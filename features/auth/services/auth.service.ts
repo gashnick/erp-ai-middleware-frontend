@@ -8,6 +8,7 @@ import type {
   CreateTenantResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
+  TenantSessionResponse,
 } from "../types";
 
 export const authService = {
@@ -37,5 +38,9 @@ export const authService = {
     payload: CreateTenantRequest,
   ): Promise<CreateTenantResponse> {
     return apiClient.post<CreateTenantResponse>("/tenants", payload);
+  },
+
+  async promoteSession(): Promise<TenantSessionResponse> {
+    return apiClient.post<TenantSessionResponse>("/auth/promote", {});
   },
 };

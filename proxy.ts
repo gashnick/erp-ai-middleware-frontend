@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_PATHS = new Set(["/", "/login", "/register", "/forgot-password"]);
 
@@ -19,7 +19,7 @@ function isProtectedPath(pathname: string): boolean {
   );
 }
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
   if (!isProtectedPath(pathname)) {

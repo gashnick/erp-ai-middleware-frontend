@@ -4,8 +4,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
   user: AuthUser;
 }
 
@@ -18,32 +17,40 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: AuthUser;
+  id: string;
+  email: string;
+  fullName: string;
+  role: string;
+  tenantId: string | null;
+  phoneNumber: string | null;
+  createdAt: string;
 }
 
 export interface CreateTenantRequest {
   companyName: string;
-  subscriptionPlan: "free" | "pro" | "enterprise";
+  subscriptionPlan: string;
+  dataSourceType: "internal" | "external"; // sent by frontend, not shown to user
+  externalSource?: string;
 }
 
+// CreateTenant response — tenant-scoped, from generateTenantSession
+// What createOrganization actually returns
 export interface CreateTenantResponse {
-  accessToken: string;
-  refreshToken: string;
-  tenant: UserTenant;
+  tenantId: string;
+  slug: string;
+  schemaName: string;
 }
 
 export interface AuthUser {
   id: string;
   email: string;
-  fullName: string;
-  role: UserRole;
-  phoneNumber?: string;
-  tenants: UserTenant[];
+  tenantId: string | null;
+  role: string;
+  fullName?: string;
+  tenants?: UserTenant[];
 }
 
-export type UserRole = "superadmin" | "admin" | "analyst" | "viewer";
+export type UserRole = "superADMIN" | "ADMIN" | "ANALYST" | "viewer";
 
 export interface UserTenant {
   tenantId: string;
@@ -58,4 +65,27 @@ export interface RefreshTokenRequest {
 
 export interface RefreshTokenResponse {
   accessToken: string;
+}
+
+// What generateTenantSession returns
+export interface CreateTenantResponse {
+  success: boolean;
+  message: string;
+  tenantId: string;
+  schemaName: string;
+  organization: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  auth: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
+export interface TenantSessionResponse {
+  access_token: string;
+  refresh_token: string;
+  user: AuthUser;
 }

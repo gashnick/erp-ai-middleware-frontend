@@ -13,7 +13,7 @@ export default function RegisterPage() {
     register({
       ...payload,
       fullName: payload.fullName,
-      role: payload.role as "admin" | "analyst" | "viewer",
+      role: payload.role as "ADMIN" | "ANALYST" | "viewer",
     });
   }
 

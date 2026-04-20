@@ -22,9 +22,7 @@ export const financeService = {
     filters?: FinanceDashboardFilters,
   ): Promise<FinanceDashboardData> {
     const params = buildFilterParams(filters);
-    return apiClient.get<FinanceDashboardData>("/dashboard/finance", {
-      params,
-    });
+    return apiClient.get<FinanceDashboardData>("/dashboard/finance", params);
   },
 
   async getCashBalance(): Promise<CashBalance> {
@@ -32,9 +30,12 @@ export const financeService = {
   },
 
   async getCashPosition(asOf?: string): Promise<CashBalance> {
-    return apiClient.get<CashBalance>("/finance/cash-position", {
-      params: { asOf },
-    });
+    if (asOf) {
+      return apiClient.get<CashBalance>("/finance/cash-position", {
+        asOf,
+      });
+    }
+    return apiClient.get<CashBalance>("/finance/cash-position");
   },
 
   async getRevenueChart(months: number = 12): Promise<RevenueDataPoint[]> {
@@ -47,7 +48,7 @@ export const financeService = {
     year: number,
   ): Promise<{ month: number; revenue: number; label: string }[]> {
     return apiClient.get("/finance/revenue/by-month", {
-      params: { year },
+      year: String(year),
     });
   },
 
@@ -56,7 +57,8 @@ export const financeService = {
     to: string,
   ): Promise<ExpenseBreakdown[]> {
     return apiClient.get<ExpenseBreakdown[]>("/finance/expenses/breakdown", {
-      params: { from, to },
+      from,
+      to,
     });
   },
 
@@ -80,13 +82,13 @@ export const financeService = {
     limit: number = 10,
   ): Promise<RecentTransaction[]> {
     return apiClient.get<RecentTransaction[]>("/finance/transactions/recent", {
-      params: { limit },
+      limit: String(limit),
     });
   },
 
   async getCashFlow(year: number): Promise<CashFlowData[]> {
     return apiClient.get<CashFlowData[]>("/finance/cash-flow", {
-      params: { year },
+      year: String(year),
     });
   },
 

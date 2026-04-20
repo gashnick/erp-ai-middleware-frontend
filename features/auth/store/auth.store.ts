@@ -2,6 +2,18 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AuthUser } from "../types";
 
+function setCookie(name: string, value: string, days = 1) {
+  if (typeof window === "undefined") return;
+  const expires = new Date();
+  expires.setDate(expires.getDate() + days);
+  document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+}
+
+function deleteCookie(name: string) {
+  if (typeof window === "undefined") return;
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
@@ -21,9 +33,14 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setTokens: (accessToken, refreshToken) => {
+        // Save to cookie so proxy.ts can read it server-side
+        setCookie("access_token", accessToken, 1);
+        // Also keep in localStorage for api-client.ts
         if (typeof window !== "undefined") {
           localStorage.setItem("access_token", accessToken);
-          localStorage.setItem("refresh_token", refreshToken);
+          if (refreshToken) {
+            localStorage.setItem("refresh_token", refreshToken);
+          }
         }
         set({ accessToken, refreshToken, isAuthenticated: true });
       },
@@ -31,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
 
       clearAuth: () => {
+        deleteCookie("access_token");
         if (typeof window !== "undefined") {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
@@ -49,6 +67,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (s) => ({
         accessToken: s.accessToken,
         refreshToken: s.refreshToken,
+        user: s.user,
       }),
     },
   ),

@@ -16,49 +16,52 @@ export function useAuth() {
     useAuthStore();
   const { setAvailableTenants, setActiveTenant } = useTenantStore();
 
+  // Step 1 — Register: creates user, no tokens returned, redirect to login
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterRequest) => authService.register(payload),
-    onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
-      setUser(data.user);
+    onSuccess: () => {
       router.push("/login");
     },
   });
 
+  // Step 2 — Login: returns system-level access_token, user has no tenant yet
   const loginMutation = useMutation({
     mutationFn: (payload: LoginRequest) => authService.login(payload),
-    onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
+    onSuccess: async (data) => {
+      setTokens(data.access_token, "");
       setUser(data.user);
 
-      const tenants = data.user.tenants.map((t) => ({
-        id: t.tenantId,
-        name: t.tenantName,
-        schemaName: t.schemaName,
-      }));
-      setAvailableTenants(tenants);
-
-      if (tenants.length === 0) {
+      if (!data.user.tenantId) {
         router.push("/login/setup-company");
-      } else {
-        if (tenants[0]) {
-          setActiveTenant(tenants[0]);
-        }
-        router.push("/dashboard");
+        return;
       }
+
+      router.push("/dashboard");
     },
   });
 
+  // Step 3 — Create Tenant: uses system token, returns tenant-scoped token
+  // Backend: generateTenantSession → { access_token, refresh_token, user: { id, email, tenantId, role } }
   const createTenantMutation = useMutation({
     mutationFn: (payload: CreateTenantRequest) =>
       authService.createTenant(payload),
     onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
+      // Replace system token with tenant-scoped token
+      setTokens(data.auth.accessToken, data.auth.refreshToken);
+
+      // Update user in store — they now have a tenant
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        setUser({
+          ...currentUser,
+          tenantId: data.tenantId,
+        });
+      }
 
       const tenant = {
-        id: data.tenant.tenantId,
-        name: data.tenant.tenantName,
-        schemaName: data.tenant.schemaName,
+        id: data.organization.id,
+        name: data.organization.name,
+        schemaName: data.schemaName,
       };
       setAvailableTenants([tenant]);
       setActiveTenant(tenant);

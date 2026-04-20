@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Sparkles } from "lucide-react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
@@ -11,16 +11,18 @@ export function ChatWindow() {
   const { messages, isAwaitingResponse, sendMessage, initSession } =
     useChatSession();
   const { bottomRef, containerRef } = useChatScroll(messages);
+  const hasInitialized = useRef(false); // ← fire once only
 
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
     initSession();
-  }, [initSession]);
+  }, []); // ← empty deps, runs once on mount
 
   const isEmpty = messages.length === 0;
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white overflow-hidden">
-      {/* Header */}
       <div className="flex items-center gap-2 border-b border-gray-100 px-4 py-3">
         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-100">
           <Sparkles className="h-3.5 w-3.5 text-purple-600" />
@@ -34,7 +36,6 @@ export function ChatWindow() {
         </span>
       </div>
 
-      {/* Message list */}
       <div
         ref={containerRef}
         className="flex flex-1 flex-col gap-4 overflow-y-auto p-4"
@@ -45,16 +46,12 @@ export function ChatWindow() {
         {isEmpty ? (
           <EmptyState />
         ) : (
-          messages.map((msg: (typeof messages)[number]) => (
-            <ChatMessage key={msg.id} message={msg} />
-          ))
+          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)
         )}
-
         {isAwaitingResponse && <TypingIndicator />}
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="border-t border-gray-100 p-3">
         <ChatInput onSend={sendMessage} isDisabled={isAwaitingResponse} />
         <p className="mt-1.5 text-center text-[10px] text-gray-400">

@@ -44,13 +44,13 @@ export function Topbar() {
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700">
                 A
               </div>
-              <span className="hidden sm:block text-sm font-medium">Admin</span>
+              <span className="hidden sm:block text-sm font-medium">ADMIN</span>
               <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel className="text-xs text-gray-500 font-normal">
-              Signed in as Admin
+              Signed in as ADMIN
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 text-sm cursor-pointer">

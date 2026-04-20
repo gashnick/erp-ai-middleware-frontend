@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   PieChart,
@@ -7,49 +7,54 @@ import {
   Tooltip,
   ResponsiveContainer,
   type TooltipProps,
-} from 'recharts'
-import { ChartCard } from '@/shared/ui/ChartCard'
-import { useOpsKpis } from '../hooks/useOps'
-import type { OrderStatus } from '../types'
+} from "recharts";
+import { ChartCard } from "@/shared/ui/ChartCard";
+import { useOpsKpis } from "../hooks/useOps";
+import type { OrderStatus } from "../types";
+import { useIsClient } from "@/hooks/useIsClient";
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  in_progress: '#2563EB',
-  confirmed: '#F59E0B',
-  completed: '#16A34A',
-  draft: '#9CA3AF',
-  cancelled: '#DC2626',
-}
+  in_progress: "#2563EB",
+  confirmed: "#F59E0B",
+  completed: "#16A34A",
+  draft: "#9CA3AF",
+  cancelled: "#DC2626",
+};
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  in_progress: 'In Progress',
-  confirmed: 'Confirmed',
-  completed: 'Completed',
-  draft: 'Draft',
-  cancelled: 'Cancelled',
-}
+  in_progress: "In Progress",
+  confirmed: "Confirmed",
+  completed: "Completed",
+  draft: "Draft",
+  cancelled: "Cancelled",
+};
 
 function OpsTooltip(props: TooltipProps<number, string>) {
-  const { active, payload } = props as TooltipProps<number, string> & { payload?: Array<{ name: string; value: number }> }
-  if (!active || !payload?.length) return null
-  const entry = payload[0]
+  const { active, payload } = props as TooltipProps<number, string> & {
+    payload?: Array<{ name: string; value: number }>;
+  };
+  if (!active || !payload?.length) return null;
+  const entry = payload[0];
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-md text-xs">
       <p className="font-medium text-gray-700">{entry?.name}</p>
       <p className="text-gray-500">
-        Orders: <span className="font-medium text-gray-900">{entry?.value}</span>
+        Orders:{" "}
+        <span className="font-medium text-gray-900">{entry?.value}</span>
       </p>
     </div>
-  )
+  );
 }
 
 export function OpsStatusChart() {
-  const { data: kpis, isLoading } = useOpsKpis()
-
+  const { data: kpis, isLoading } = useOpsKpis();
+  const isClient = useIsClient();
+  if (!isClient) return null;
   const chartData = (kpis?.statusBreakdown ?? []).map((item) => ({
     name: STATUS_LABELS[item.status],
     value: item.count,
     color: STATUS_COLORS[item.status],
-  }))
+  }));
 
   return (
     <ChartCard
@@ -97,5 +102,5 @@ export function OpsStatusChart() {
         </div>
       </div>
     </ChartCard>
-  )
+  );
 }

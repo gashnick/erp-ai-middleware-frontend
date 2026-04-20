@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { ChartCard } from "@/shared/ui/ChartCard";
 import { useHrKpis } from "../hooks/useHr";
+import { useIsClient } from "@/hooks/useIsClient";
 
 type TooltipPayload = { department: string; count: number };
 
@@ -36,7 +37,8 @@ function HeadcountTooltip(props: {
 
 export function HeadcountChart() {
   const { data: kpis, isLoading } = useHrKpis();
-
+  const isClient = useIsClient();
+  if (!isClient) return null;
   return (
     <ChartCard
       title="Headcount by Department"

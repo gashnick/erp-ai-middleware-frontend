@@ -37,11 +37,11 @@ export function useFinanceDashboard(
       console.warn("Using mock data - API unavailable");
       const mockData: FinanceDashboardData = {
         cashBalance: {
-          balance: 125000,
+          current: 125000,
           currency: "USD",
           asOf: new Date().toISOString(),
           trend: "up",
-          trendPercent: 12.5,
+          changePercentage: 12.5,
         },
         kpis: [
           {
@@ -135,9 +135,7 @@ export function useFinanceDashboard(
             description: "Client Invoice #001",
             amount: 5000,
             currency: "USD",
-            date: new Date(
-              Date.now() - 2 * 24 * 60 * 60 * 1000
-            ).toISOString(),
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
             status: "completed",
             counterparty: "ACME Corp",
           },
@@ -147,9 +145,7 @@ export function useFinanceDashboard(
             description: "Office Supplies",
             amount: 250,
             currency: "USD",
-            date: new Date(
-              Date.now() - 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
             status: "completed",
             counterparty: "Staples",
           },

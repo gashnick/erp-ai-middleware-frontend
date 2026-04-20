@@ -25,7 +25,7 @@ export const registerSchema = z
       .email("Enter a valid email address"),
     phoneNumber: z.string().min(1, "Phone number is required"),
     role: z
-      .enum(["admin", "analyst", "viewer"])
+      .enum(["ADMIN", "ANALYST", "viewer"])
       .refine((val) => !!val, { message: "Select a valid role" }),
     password: z
       .string()

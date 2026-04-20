@@ -75,11 +75,10 @@ export function InvoiceAgingTable() {
 
   return (
     <DataTable
-      columns={COLUMNS}
-      data={tableData}
+      columns={COLUMNS as DataTableColumn<{ id: string | number }>[]}
+      rows={tableData as { id: string | number }[]}
       isLoading={isLoading}
-      compact
-      title="Invoice Aging"
+      className="rounded-lg border border-gray-200"
     />
   );
 }

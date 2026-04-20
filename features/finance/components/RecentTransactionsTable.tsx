@@ -96,11 +96,10 @@ export function RecentTransactionsTable({
 
   return (
     <DataTable
-      columns={COLUMNS}
-      data={(data ?? []) as TransactionRow[]}
+      columns={COLUMNS as DataTableColumn<{ id: string | number }>[]}
+      rows={(data ?? []) as TransactionRow[]}
       isLoading={isLoading}
-      compact
-      title="Recent Transactions"
+      className="rounded-lg border border-gray-200"
     />
   );
 }

@@ -899,9 +899,9 @@ features/chat/
 
 ---
 
-### 3.3 Admin - Model & Prompt Management 🟢 LOW
+### 3.3 ADMIN - Model & Prompt Management 🟢 LOW
 
-**Endpoints**: `GET/PUT /admin/model-config/*`, `POST /admin/prompt-templates/*`
+**Endpoints**: `GET/PUT /ADMIN/model-config/*`, `POST /ADMIN/prompt-templates/*`
 
 **Components**:
 
@@ -928,7 +928,7 @@ features/chat/
 
 ---
 
-### 3.5 Tenant Management (Admin) 🟢 LOW
+### 3.5 Tenant Management (ADMIN) 🟢 LOW
 
 **Endpoints**: `GET /tenants`, `GET /tenants/:id`, `DELETE /tenants/:id`
 
@@ -1046,7 +1046,7 @@ app/
 │   │   └── page.tsx      (Create - Phase 2)
 │   ├── reports/
 │   │   └── page.tsx      (Create - Phase 3)
-│   ├── admin/
+│   ├── ADMIN/
 │   │   └── page.tsx      (Create - Phase 3)
 │   └── settings/
 │       └── page.tsx
@@ -1066,7 +1066,7 @@ features/
 ├── ops/                 (Create - Phase 2)
 ├── chat/                (Create - Phase 2)
 ├── reports/             (Create - Phase 3)
-├── admin/               (Create - Phase 3)
+├── ADMIN/               (Create - Phase 3)
 ├── whatsapp/            (Create - Phase 3)
 ├── invoices/            (Create - Phase 3)
 └── tenant/              (Partial - extend)
@@ -1195,7 +1195,7 @@ styles/
 - [ ] Detail view
 - [ ] Status tracking
 
-**Admin Features**
+**ADMIN Features**
 
 - [ ] Model management
 - [ ] Prompt versioning

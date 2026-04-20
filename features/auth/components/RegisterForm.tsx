@@ -139,8 +139,8 @@ export function RegisterForm({
           aria-describedby={errors.role ? "role-error" : undefined}
         >
           <option value="">Select a role</option>
-          <option value="admin">Admin</option>
-          <option value="analyst">Analyst</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="ANALYST">ANALYST</option>
           <option value="viewer">Viewer</option>
         </select>
         {errors.role && (
