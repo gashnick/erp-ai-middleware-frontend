@@ -1,35 +1,32 @@
 // Finance Dashboard Type Definitions
 
 export interface CashBalance {
-  balance: number;
+  current: number;
   currency: string;
   asOf: string;
-  trend: "up" | "down" | "stable";
-  trendPercent: number;
+  trend: "up" | "down" | "neutral";
+  changePercentage: number;
 }
 
 export interface KpiMetric {
   label: string;
   value: number;
   currency?: string;
-  trend: number; // percentage
+  trend: number;
   period: string;
   icon?: string;
 }
 
 export interface RevenueByMonth {
-  month: number;
-  year: number;
+  month: string; // "Nov 2025" — string from backend
   revenue: number;
-  currency: string;
-  label?: string; // Formatted label like "Jan 2024"
+  expenses: number;
 }
 
 export interface ExpenseBreakdown {
   category: string;
-  vendorId: string;
-  vendorName: string;
   total: number;
+  count: number;
   currency: string;
   percentage: number;
 }
@@ -39,28 +36,24 @@ export interface InvoiceAging {
   count: number;
   amount: number;
   currency: string;
-  percentage: number;
 }
 
+// Matches actual bank_transactions table columns
 export interface RecentTransaction {
   id: string;
-  type: "invoice" | "expense" | "payment" | "deposit";
-  description: string;
+  type: "credit" | "debit";
   amount: number;
   currency: string;
-  date: string;
-  status: "completed" | "pending" | "failed";
-  counterparty?: string;
+  description: string | null;
+  transactionDate: string | null;
+  reference: string | null;
 }
 
 export interface CashFlowData {
-  month: number;
-  year: number;
+  month: string; // "Jan 2026" — string from backend
   inflow: number;
   outflow: number;
-  netCashFlow: number;
-  currency: string;
-  label?: string;
+  net: number;
 }
 
 export interface FinanceDashboardData {
@@ -85,21 +78,36 @@ export interface DateRange {
   to: Date;
 }
 
+export type InvoiceStatus =
+  | "paid"
+  | "pending"
+  | "overdue"
+  | "draft"
+  | "sent"
+  | "void";
+
 export interface Invoice {
   id: string;
   invoiceNumber: string;
-  vendorName?: string;
-  customerName?: string;
+  customerName: string | null;
   amount: number;
   currency: string;
-  dueDate: string;
-  issuedDate: string;
-  status: "paid" | "unpaid" | "overdue" | "draft";
-  description?: string;
+  dueDate: string | null;
+  issuedAt: string | null;
+  status: InvoiceStatus;
 }
 
 export interface FinanceDashboardFilters {
   period: "today" | "week" | "month" | "quarter" | "ytd" | "custom";
   dateRange?: DateRange;
   currencies?: string[];
+}
+
+export interface DashboardKpis {
+  cashBalance: CashBalance;
+  totalRevenue: number;
+  totalExpenses: number;
+  pendingInvoicesCount: number;
+  overdueInvoicesCount: number;
+  revenueChangePercentage: number;
 }

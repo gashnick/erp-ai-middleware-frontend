@@ -1,14 +1,23 @@
-export type InvoiceStatus = "paid" | "pending" | "overdue" | "draft";
+export type InvoiceStatus =
+  | "paid"
+  | "pending"
+  | "overdue"
+  | "draft"
+  | "sent"
+  | "void";
 
 export interface Invoice {
   id: string;
-  invoiceNumber: string;
-  customerName: string;
-  amount: number;
+  invoice_number: string;
+  customer_name: string;
+  amount: string | number;
   currency: string;
   status: InvoiceStatus;
-  dueDate: string;
-  issuedAt: string;
+  due_date: string | null;
+  invoice_date: string | null;
+  is_encrypted: boolean;
+  external_id: string | null;
+  created_at: string;
 }
 
 export interface CashBalance {
@@ -31,8 +40,8 @@ export interface DashboardKpis {
   cashBalance: CashBalance;
   totalRevenue: number;
   totalExpenses: number;
-  pendingInvoicesCount: number;
-  overdueInvoicesCount: number;
+  pending_invoices_count: number;
+  overdue_invoices_count: number;
   revenueChangePercentage: number;
 }
 
@@ -74,13 +83,12 @@ export interface InvoiceAging {
 
 export interface RecentTransaction {
   id: string;
-  type: "invoice" | "expense" | "payment" | "deposit";
-  description: string;
+  type: "credit" | "debit";
   amount: number;
   currency: string;
-  date: string;
-  status: "completed" | "pending" | "failed";
-  counterparty?: string;
+  description: string | null;
+  transactionDate: string | null;
+  reference: string | null;
 }
 
 export interface CashFlowData {

@@ -37,19 +37,22 @@ const COLUMNS: DataTableColumn<InvoiceAgingRow>[] = [
     key: "percentage",
     label: "Percent",
     align: "right",
-    render: (row) => (
-      <div className="flex items-center gap-2">
-        <div className="h-2 flex-1 rounded-full bg-gray-200">
-          <div
-            className="h-full rounded-full bg-blue-500"
-            style={{ width: `${row.percentage}%` }}
-          />
+    render: (row) => {
+      const percentage = row.percentage ?? 0;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="h-2 flex-1 rounded-full bg-gray-200">
+            <div
+              className="h-full rounded-full bg-blue-500"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+          <span className="w-10 text-right text-sm font-medium">
+            {percentage.toFixed(1)}%
+          </span>
         </div>
-        <span className="w-10 text-right text-sm font-medium">
-          {row.percentage.toFixed(1)}%
-        </span>
-      </div>
-    ),
+      );
+    },
   },
 ];
 

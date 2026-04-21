@@ -15,6 +15,8 @@ export function getInvoiceStatusConfig(status: InvoiceStatus): {
     pending: { label: "Pending", variant: "warning" },
     overdue: { label: "Overdue", variant: "error" },
     draft: { label: "Draft", variant: "neutral" },
+    sent: { label: "Sent", variant: "info" as "success" },
+    void: { label: "Void", variant: "neutral" },
   };
   return map[status];
 }

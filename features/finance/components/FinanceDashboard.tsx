@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsClient } from "@/hooks/useIsClient";
 import { Button } from "@/components/ui/button";
 import { Download, RefreshCw } from "lucide-react";
 import { CashBalanceCard } from "./CashBalanceCard";
@@ -14,11 +15,8 @@ import { EmptyStateFinance } from "./EmptyStateFinance";
 import { useFinanceDashboard } from "../hooks/useFinanceDashboard";
 import { FinanceDashboardFilters } from "../types";
 
-/**
- * Complete Finance Dashboard - main container
- * Orchestrates all finance widgets and handles data fetching
- */
 export function FinanceDashboard() {
+  const isClient = useIsClient();
   const { data, loading, error, refetch, filters, setFilters } =
     useFinanceDashboard();
 
@@ -28,19 +26,32 @@ export function FinanceDashboard() {
 
   const handleExport = async () => {
     try {
-      // TODO: Implement PDF export
       console.log("Export to PDF");
     } catch (err) {
       console.error("Export failed:", err);
     }
   };
 
-  // Show empty state if no data and not loading
+  if (!isClient) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-8 w-64 rounded bg-gray-100" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="h-32 rounded-lg bg-gray-100" />
+          <div className="h-32 rounded-lg bg-gray-100 lg:col-span-2" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="h-64 rounded-lg bg-gray-100" />
+          <div className="h-64 rounded-lg bg-gray-100" />
+        </div>
+      </div>
+    );
+  }
+
   if (!data && !loading) {
     return <EmptyStateFinance onRetry={refetch} />;
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-6">
@@ -76,7 +87,6 @@ export function FinanceDashboard() {
             value={filters.period}
             onChange={handlePeriodChange}
           />
-
           <Button
             variant="outline"
             size="sm"
@@ -85,7 +95,6 @@ export function FinanceDashboard() {
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </Button>
-
           <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
             Export
@@ -93,13 +102,11 @@ export function FinanceDashboard() {
         </div>
       </div>
 
-      {/* Cash Balance Summary */}
+      {/* Cash Balance + KPIs */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <CashBalanceCard />
         </div>
-
-        {/* KPI Cards */}
         {data?.kpis && (
           <div className="lg:col-span-2">
             <KpiSection kpis={data.kpis} loading={loading} />
@@ -108,22 +115,30 @@ export function FinanceDashboard() {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <RevenueChart />
-        <CashFlowChart year={new Date().getFullYear()} />
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="w-full">
+          <RevenueChart />
+        </div>
+        <div className="w-full">
+          <CashFlowChart year={new Date().getFullYear()} />
+        </div>
       </div>
 
       {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ExpenseBreakdownChart
-          from={
-            new Date(new Date().setMonth(new Date().getMonth() - 1))
-              .toISOString()
-              .split("T")[0]
-          }
-          to={new Date().toISOString().split("T")[0]}
-        />
-        <InvoiceAgingTable />
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="w-full">
+          <ExpenseBreakdownChart
+            from={
+              new Date(new Date().setMonth(new Date().getMonth() - 1))
+                .toISOString()
+                .split("T")[0]
+            }
+            to={new Date().toISOString().split("T")[0]}
+          />
+        </div>
+        <div className="w-full">
+          <InvoiceAgingTable />
+        </div>
       </div>
 
       {/* Transactions Table */}

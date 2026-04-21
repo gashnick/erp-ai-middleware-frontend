@@ -1,48 +1,42 @@
 "use client";
 
 import { DataTable, type DataTableColumn } from "@/shared/ui/DataTable";
-import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { formatDate } from "@/utils/formatDate";
 import { useRecentTransactions } from "../hooks/useExpenses";
-import { RecentTransaction } from "../types";
+import type { RecentTransaction } from "../types";
+import { cn } from "@/utils/cn";
 
-type TransactionRow = RecentTransaction & { id: string };
-
-const STATUS_VARIANT_MAP: Record<
-  RecentTransaction["status"],
-  "success" | "warning" | "error" | "neutral"
-> = {
-  completed: "success",
-  pending: "warning",
-  failed: "error",
-};
-
-const TYPE_BADGE_MAP: Record<RecentTransaction["type"], string> = {
-  invoice: "Invoice",
-  expense: "Expense",
-  payment: "Payment",
-  deposit: "Deposit",
-};
-
-const COLUMNS: DataTableColumn<TransactionRow>[] = [
+const COLUMNS: DataTableColumn<RecentTransaction>[] = [
   {
     key: "description",
     label: "Description",
     render: (row) => (
-      <div className="flex flex-col gap-0.5">
-        <span className="font-medium text-gray-900">{row.description}</span>
-        <span className="text-xs text-gray-500">
-          {TYPE_BADGE_MAP[row.type]}
-        </span>
-      </div>
+      <span className="text-sm text-gray-900">{row.description ?? "—"}</span>
     ),
   },
   {
-    key: "counterparty",
-    label: "Counterparty",
+    key: "reference",
+    label: "Reference",
     render: (row) => (
-      <span className="text-gray-600">{row.counterparty || "—"}</span>
+      <span className="font-mono text-xs text-gray-500">
+        {row.reference ?? "—"}
+      </span>
+    ),
+  },
+  {
+    key: "type",
+    label: "Type",
+    render: (row) => (
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+          row.type === "credit"
+            ? "bg-green-50 text-green-700"
+            : "bg-red-50 text-red-700",
+        )}
+      >
+        {row.type === "credit" ? "↑ Credit" : "↓ Debit"}
+      </span>
     ),
   },
   {
@@ -50,26 +44,30 @@ const COLUMNS: DataTableColumn<TransactionRow>[] = [
     label: "Amount",
     align: "right",
     render: (row) => (
-      <span className="font-medium tabular-nums">
+      <span
+        className={cn(
+          "font-medium tabular-nums",
+          row.type === "credit" ? "text-green-700" : "text-red-600",
+        )}
+      >
+        {row.type === "credit" ? "+" : "-"}
         {formatCurrency(row.amount, row.currency)}
       </span>
     ),
   },
   {
-    key: "date",
+    key: "transactionDate",
     label: "Date",
     render: (row) => (
-      <span className="text-gray-600">{formatDate(row.date)}</span>
-    ),
-  },
-  {
-    key: "status",
-    label: "Status",
-    render: (row) => (
-      <StatusBadge
-        label={row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-        variant={STATUS_VARIANT_MAP[row.status]}
-      />
+      <span className="text-xs text-gray-500">
+        {row.transactionDate
+          ? new Date(row.transactionDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "—"}
+      </span>
     ),
   },
 ];
@@ -78,9 +76,6 @@ interface RecentTransactionsTableProps {
   limit?: number;
 }
 
-/**
- * Shows recent transactions across invoices, expenses, and payments
- */
 export function RecentTransactionsTable({
   limit = 10,
 }: RecentTransactionsTableProps) {
@@ -95,10 +90,11 @@ export function RecentTransactionsTable({
   }
 
   return (
-    <DataTable
-      columns={COLUMNS as DataTableColumn<{ id: string | number }>[]}
-      rows={(data ?? []) as TransactionRow[]}
+    <DataTable<RecentTransaction>
+      columns={COLUMNS}
+      rows={data ?? []}
       isLoading={isLoading}
+      emptyMessage="No transactions found."
       className="rounded-lg border border-gray-200"
     />
   );

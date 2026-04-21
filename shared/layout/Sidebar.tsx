@@ -9,6 +9,7 @@ import {
   Settings,
   BarChart3,
   Briefcase,
+  Upload,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -26,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Finance", href: "/finance", icon: BarChart3 },
   { label: "HR", href: "/hr", icon: Users },
   { label: "Operations", href: "/ops", icon: Briefcase },
+  { label: "Import Data", href: "/import", icon: Upload },
   { label: "AI Chat", href: "/chat", icon: MessageSquare },
   { label: "Settings", href: "/settings", icon: Settings },
 ];

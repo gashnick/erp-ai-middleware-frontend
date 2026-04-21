@@ -4,11 +4,24 @@ import { DollarSign, TrendingUp, FileText, AlertCircle } from "lucide-react";
 import { KpiCard } from "@/shared/ui/KpiCard";
 import { RevenueChart } from "@/features/finance/components/RevenueChart";
 import { InvoicesTable } from "@/features/finance/components/InvoicesTable";
+import { useInvoices } from "@/features/finance/hooks/useInvoices";
 import { useDashboardKpis } from "@/features/dashboard/hooks/useDashboardKpis";
 import { formatCompactCurrency } from "@/utils/formatCurrency";
 
 export default function DashboardPage() {
   const { data: kpis, isLoading } = useDashboardKpis();
+  const { data: invoicesData } = useInvoices({ limit: 1000 });
+  
+  // Fallback: calculate pending and overdue counts from invoices if not in KPIs
+  const invoices = Array.isArray(invoicesData) ? invoicesData : invoicesData?.data ?? [];
+  const pendingCount = kpis?.pending_invoices_count ?? invoices.filter(inv => inv.status === 'pending').length;
+  const overdueCount = kpis?.overdue_invoices_count ?? invoices.filter(inv => inv.status === 'overdue').length;
+  
+  console.log("Dashboard KPIs data:", kpis);
+  console.log("pending_invoices_count:", kpis?.pending_invoices_count);
+  console.log("overdue_invoices_count:", kpis?.overdue_invoices_count);
+  console.log("Calculated pendingCount:", pendingCount);
+  console.log("Calculated overdueCount:", overdueCount);
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,21 +67,21 @@ export default function DashboardPage() {
         />
         <KpiCard
           label="Pending Invoices"
-          value={kpis ? String(kpis.pendingInvoicesCount) : "—"}
+          value={String(pendingCount)}
           icon={FileText}
           isLoading={isLoading}
         />
         <KpiCard
           label="Overdue"
-          value={kpis ? String(kpis.overdueInvoicesCount) : "—"}
+          value={String(overdueCount)}
           icon={AlertCircle}
           isLoading={isLoading}
         />
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="w-full lg:col-span-2">
           <RevenueChart />
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ChevronDown, Bell, LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
@@ -11,10 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useTenantStore } from "@/features/tenant/store/tenant.store";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useToastStore } from "@/store/toast.store";
 import { TenantSwitcher } from "@/features/tenant/components/TenantSwitcher";
 
 export function Topbar() {
+  const router = useRouter();
   const activeTenant = useTenantStore((s) => s.activeTenant);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const addToast = useToastStore((s) => s.addToast);
+
+  const handleLogout = () => {
+    clearAuth();
+    addToast("You have been signed out.", "info", 3000);
+    router.push("/login");
+  };
 
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-6">
@@ -58,7 +70,10 @@ export function Topbar() {
               Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 text-sm text-red-600 cursor-pointer focus:text-red-600">
+            <DropdownMenuItem
+              className="gap-2 text-sm text-red-600 cursor-pointer focus:text-red-600"
+              onClick={handleLogout}
+            >
               <LogOut className="h-3.5 w-3.5" />
               Sign out
             </DropdownMenuItem>

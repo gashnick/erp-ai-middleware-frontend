@@ -71,7 +71,7 @@ export const financeService = {
     limit?: number;
     status?: string;
   }): Promise<PaginatedResponse<Invoice>> {
-    return apiClient.get<PaginatedResponse<Invoice>>("/finance/invoices", {
+    return apiClient.get<PaginatedResponse<Invoice>>("/invoices", {
       page: String(params?.page ?? 1),
       limit: String(params?.limit ?? 20),
       ...(params?.status ? { status: params.status } : {}),

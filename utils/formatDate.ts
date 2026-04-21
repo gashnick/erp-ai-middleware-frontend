@@ -1,30 +1,25 @@
-type DateInput = string | Date | number;
-
-export function formatDate(
-  input: DateInput,
-  options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  },
-  locale: string = "en-US",
+/**
+ * Safely format a date string to locale date
+ * Returns "—" if date is invalid
+ */
+export function formatDateSafe(
+  dateString: string | null | undefined,
+  locale = "en-US",
 ): string {
-  return new Intl.DateTimeFormat(locale, options).format(new Date(input));
-}
+  if (!dateString) return "—";
 
-export function formatRelativeDate(input: DateInput): string {
-  const date = new Date(input);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  return formatDate(input);
-}
-
-export function isOverdue(dueDate: DateInput): boolean {
-  return new Date(dueDate) < new Date();
+  try {
+    const date = new Date(dateString);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return "—";
+    }
+    return date.toLocaleDateString(locale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch {
+    return "—";
+  }
 }

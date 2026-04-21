@@ -18,7 +18,11 @@ export function useInvoices({
 
   const query = useQuery({
     queryKey: ["finance", "invoices", { page, limit, status }],
-    queryFn: () => financeService.getInvoices({ page, limit, status }),
+    queryFn: async () => {
+      const result = await financeService.getInvoices({ page, limit, status });
+      console.log("Invoice API Response:", result);
+      return result;
+    },
     staleTime: 15_000,
     placeholderData: (prev) => prev,
   });

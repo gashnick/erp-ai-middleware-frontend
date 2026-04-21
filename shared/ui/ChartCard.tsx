@@ -38,13 +38,13 @@ export function ChartCard({
       </div>
 
       {/* Chart area */}
-      <div className="mt-4" style={{ height }} aria-label={`Chart: ${title}`}>
+      <div className="mt-4 w-full" style={{ height }} aria-label={`Chart: ${title}`}>
         {isLoading ? (
-          <div className="flex h-full items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center">
             <div className="h-full w-full animate-pulse rounded-md bg-gray-50" />
           </div>
         ) : (
-          children
+          <div className="h-full w-full">{children}</div>
         )}
       </div>
     </div>

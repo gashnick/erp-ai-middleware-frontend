@@ -1,4 +1,6 @@
 import type { ApiError, ApiResponse } from "@/types/api.types";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useToastStore } from "@/store/toast.store";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
@@ -12,6 +14,18 @@ class ApiClientError extends Error {
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
+  if (response.status === 401) {
+    // Token expired or invalid
+    useAuthStore.getState().clearAuth();
+    useToastStore.getState().addToast(
+      "Your session has expired. Please log in again.",
+      "warning",
+      5000,
+    );
+    window.location.href = "/login";
+    throw new ApiClientError("Session expired", 401);
+  }
+
   if (!response.ok) {
     let errorBody: ApiError;
     try {
@@ -26,6 +40,11 @@ async function parseResponse<T>(response: Response): Promise<T> {
   }
 
   const json = await response.json();
+  
+  // Debug log for invoices endpoint
+  if (response.url.includes("/invoices")) {
+    console.log("[API] /invoices response:", json);
+  }
 
   // Backend returns direct response, no { data: ... } wrapper
   return json as T;
