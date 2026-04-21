@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, FileText, AlertCircle } from "lucide-react";
 import { KpiCard } from "@/shared/ui/KpiCard";
 import { RevenueChart } from "@/features/finance/components/RevenueChart";
 import { InvoicesTable } from "@/features/finance/components/InvoicesTable";
+import { AlertsCard } from "@/features/alerts/components/AlertsCard";
 import { useInvoices } from "@/features/finance/hooks/useInvoices";
 import { useDashboardKpis } from "@/features/dashboard/hooks/useDashboardKpis";
 import { formatCompactCurrency } from "@/utils/formatCurrency";
@@ -79,16 +80,13 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Charts row */}
+      {/* Charts and Alerts row */}
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="w-full lg:col-span-2">
           <RevenueChart />
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-gray-900">Quick Stats</h3>
-          <p className="mt-2 text-xs text-gray-400">
-            Add more widgets here (alerts, upcoming payments, etc.)
-          </p>
+        <div className="w-full">
+          <AlertsCard />
         </div>
       </div>
 

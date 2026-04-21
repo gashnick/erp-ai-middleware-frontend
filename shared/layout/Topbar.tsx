@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronDown, Bell, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useTenantStore } from "@/features/tenant/store/tenant.store";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useToastStore } from "@/store/toast.store";
+import { AlertNotificationCenter } from "@/features/alerts/components/AlertNotificationCenter";
 import { TenantSwitcher } from "@/features/tenant/components/TenantSwitcher";
 
 export function Topbar() {
@@ -35,16 +36,8 @@ export function Topbar() {
 
       {/* Right actions */}
       <div className="flex items-center gap-3">
-        {/* Notifications */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative h-8 w-8 text-gray-500 hover:text-gray-900"
-          aria-label="View notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-blue-600" />
-        </Button>
+      {/* Alert Notifications */}
+      <AlertNotificationCenter />
 
         {/* User menu */}
         <DropdownMenu>
