@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, Settings } from "lucide-react";
 
 export function AlertsHub() {
-  const [activeTab, setActiveTab] = useState<"rules" | "alerts">("alerts");
+  const [activeTab, setActiveTab] = useState<"rules" | "alerts">("rules");
   const [showRuleForm, setShowRuleForm] = useState(false);
   const [editingRule, setEditingRule] = useState<AlertRule | null>(null);
 

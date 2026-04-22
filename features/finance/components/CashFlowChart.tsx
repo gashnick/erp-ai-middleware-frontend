@@ -77,11 +77,12 @@ export function CashFlowChart({ year }: CashFlowChartProps) {
       isLoading={isLoading}
       height={300}
     >
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={chartData}
-          margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
-        >
+      {chartData.length > 0 && (
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+          <BarChart
+            data={chartData}
+            margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+          >
           <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
 
           <XAxis
@@ -106,6 +107,7 @@ export function CashFlowChart({ year }: CashFlowChartProps) {
           <Bar dataKey="netCashFlow" fill="#3B82F6" name="Net Cash Flow" />
         </BarChart>
       </ResponsiveContainer>
+      )}
     </ChartCard>
   );
 }

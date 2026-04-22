@@ -73,10 +73,10 @@ export function RevenueChart() {
       isLoading={isLoading}
       height={260}
     >
-      {isClient && (
-        <ResponsiveContainer width="100%" height="100%">
+      {isClient && data && data.length > 0 && (
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <AreaChart
-            data={data ?? []}
+            data={data}
             margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
           >
             <defs>
