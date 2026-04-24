@@ -14,7 +14,7 @@ export function useChatSession() {
     setIsAwaitingResponse,
   } = useChatStore();
 
-  const isInitializingRef = useRef(false); // ← prevents concurrent calls
+  const isInitializingRef = useRef(false);
 
   const createSessionMutation = useMutation({
     mutationFn: chatService.createSession,
@@ -24,20 +24,18 @@ export function useChatSession() {
   });
 
   const initSession = useCallback(async () => {
-    // Guard: don't create a session if one exists or one is being created
     if (sessionId || isInitializingRef.current) return;
-
     isInitializingRef.current = true;
     try {
       await createSessionMutation.mutateAsync();
     } finally {
       isInitializingRef.current = false;
     }
-  }, [sessionId]); // ← only depends on sessionId, not createSessionMutation
+  }, [sessionId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendMessage = useCallback(
-    async (content: string) => {
-      if (!content.trim() || isAwaitingResponse) return;
+    async (text: string) => {
+      if (!text.trim() || isAwaitingResponse) return;
 
       let activeSessionId = sessionId;
       if (!activeSessionId) {
@@ -45,21 +43,39 @@ export function useChatSession() {
         activeSessionId = session.id;
       }
 
+      // Optimistic user message
       const optimisticMessage: ChatMessage = {
         id: crypto.randomUUID(),
+        sessionId: activeSessionId,
         role: "user",
-        content,
-        createdAt: new Date(),
+        content: { type: "text", text: text.trim() },
+        createdAt: new Date().toISOString(),
       };
       addMessage(optimisticMessage);
       setIsAwaitingResponse(true);
 
       try {
-        const response = await chatService.sendMessage({
+        const response = await chatService.sendMessage(
+          activeSessionId,
+          text.trim(),
+        );
+        addMessage(response);
+      } catch (error) {
+        // Add error message to chat
+        const errMessage: ChatMessage = {
+          id: crypto.randomUUID(),
           sessionId: activeSessionId,
-          content: content.trim(),
-        });
-        addMessage(response.message);
+          role: "assistant",
+          content: {
+            type: "text",
+            text:
+              error instanceof Error
+                ? `Error: ${error.message}`
+                : "Something went wrong. Please try again.",
+          },
+          createdAt: new Date().toISOString(),
+        };
+        addMessage(errMessage);
       } finally {
         setIsAwaitingResponse(false);
       }

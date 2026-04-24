@@ -3,10 +3,10 @@ import { alertsServiceInstance } from "../services";
 import { useToastStore } from "@/store/toast.store";
 
 export function useAlertEvents(params?: {
-  page?: number;
-  limit?: number;
   status?: string;
   severity?: string;
+  limit?: number;
+  offset?: number;
 }) {
   return useQuery({
     queryKey: ["alerts", "events", params],
@@ -18,18 +18,24 @@ export function useAlertEvents(params?: {
 
 export function useOpenAlerts(params?: { page?: number; limit?: number }) {
   return useQuery({
-    queryKey: ["alerts", "events", "open", params],
+    queryKey: ['alerts', 'events', 'open', params],
     queryFn: () => alertsServiceInstance.getOpenAlerts(params),
     staleTime: 10_000,
     refetchInterval: 20_000,
-  });
+  })
 }
 
-export function useAlertEvent(id: string) {
+export function useAlertEvent(params?: {
+  status?: string;
+  severity?: string;
+  limit?: number;
+  offset?: number;
+}) {
   return useQuery({
-    queryKey: ["alerts", "events", id],
-    queryFn: () => alertsServiceInstance.getAlertEvent(id),
+    queryKey: ["alerts", "events", params],
+    queryFn: () => alertsServiceInstance.listAlertEvents(params),
     staleTime: 15_000,
+    refetchInterval: 30_000,
   });
 }
 
@@ -45,10 +51,7 @@ export function useAcknowledgeAlertEvent() {
       addToast("Alert acknowledged", "success");
     },
     onError: (error: any) => {
-      addToast(
-        error.message || "Failed to acknowledge alert",
-        "error",
-      );
+      addToast(error.message || "Failed to acknowledge alert", "error");
     },
   });
 }
@@ -65,10 +68,7 @@ export function useResolveAlertEvent() {
       addToast("Alert resolved", "success");
     },
     onError: (error: any) => {
-      addToast(
-        error.message || "Failed to resolve alert",
-        "error",
-      );
+      addToast(error.message || "Failed to resolve alert", "error");
     },
   });
 }

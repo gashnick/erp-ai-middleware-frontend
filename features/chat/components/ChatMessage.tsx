@@ -1,3 +1,5 @@
+"use client";
+
 import { Bot, User } from "lucide-react";
 import { cn } from "@/utils/cn";
 import type { ChatMessage as ChatMessageType } from "../types";
@@ -8,6 +10,10 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isAssistant = message.role === "assistant";
+  const text =
+    typeof message.content === "string"
+      ? message.content
+      : (message.content?.text ?? "");
 
   return (
     <div
@@ -16,12 +22,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
         isAssistant ? "flex-row" : "flex-row-reverse",
       )}
       role="article"
-      aria-label={`${isAssistant ? "AI" : "You"}: ${message.content}`}
+      aria-label={`${isAssistant ? "AI" : "You"}: ${text}`}
     >
       {/* Avatar */}
       <div
         className={cn(
-          "flex h-7 w-7 shrink-0 items-center justify-center rounded-full mt-0.5",
+          "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full mt-0.5",
           isAssistant
             ? "bg-purple-100 text-purple-700"
             : "bg-blue-100 text-blue-700",
@@ -45,11 +51,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
       >
         {message.isStreaming ? (
           <span>
-            {message.content}
+            {text}
             <span className="ml-0.5 inline-block h-4 w-0.5 animate-pulse bg-current opacity-70" />
           </span>
         ) : (
-          message.content
+          text
+        )}
+        {/* Latency badge for AI messages */}
+        {isAssistant && message.latencyMs && (
+          <div className="mt-1 text-[10px] text-gray-400">
+            {(message.latencyMs / 1000).toFixed(1)}s
+          </div>
         )}
       </div>
     </div>

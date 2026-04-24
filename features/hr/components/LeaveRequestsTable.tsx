@@ -1,15 +1,19 @@
 'use client'
 
+import { useState } from 'react'
 import { DataTable, type DataTableColumn } from '@/shared/ui/DataTable'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { useLeaveRequests } from '../hooks/useHr'
-import type { LeaveRequest } from '../types'
+import { cn } from '@/utils/cn'
+import type { LeaveRequest, LeaveRequestStatus } from '../types'
 
-const LEAVE_TYPE_LABELS: Record<LeaveRequest['type'], string> = {
+const LEAVE_TYPE_LABELS: Record<LeaveRequest['leaveType'], string> = {
   annual: 'Annual',
   sick: 'Sick',
-  parental: 'Parental',
+  personal: 'Personal',
   unpaid: 'Unpaid',
+  maternity: 'Maternity',
+  paternity: 'Paternity',
 }
 
 const STATUS_BADGE_MAP: Record<
@@ -30,10 +34,10 @@ const COLUMNS: DataTableColumn<LeaveRequest>[] = [
     ),
   },
   {
-    key: 'type',
+    key: 'leaveType',
     label: 'Type',
     render: (row) => (
-      <span className="text-sm text-gray-700">{LEAVE_TYPE_LABELS[row.type]}</span>
+      <span className="text-sm text-gray-700">{LEAVE_TYPE_LABELS[row.leaveType]}</span>
     ),
   },
   {
@@ -76,15 +80,42 @@ const COLUMNS: DataTableColumn<LeaveRequest>[] = [
   },
 ]
 
+const STATUS_TABS: { label: string; value: LeaveRequestStatus | undefined }[] = [
+  { label: 'All', value: undefined },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Approved', value: 'approved' },
+  { label: 'Rejected', value: 'rejected' },
+]
+
 export function LeaveRequestsTable() {
-  const { data, isLoading } = useLeaveRequests()
+  const [activeStatus, setActiveStatus] = useState<LeaveRequestStatus | undefined>()
+  const { data, isLoading } = useLeaveRequests(activeStatus ? String(activeStatus) : undefined)
 
   return (
-    <DataTable<LeaveRequest>
-      columns={COLUMNS}
-      rows={data?.data ?? []}
-      isLoading={isLoading}
-      emptyMessage="No leave requests found."
-    />
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-1 border-b border-gray-200">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={String(tab.value)}
+            type="button"
+            onClick={() => setActiveStatus(tab.value)}
+            className={cn(
+              'px-3 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
+              activeStatus === tab.value
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-gray-500 hover:text-gray-900',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <DataTable<LeaveRequest>
+        columns={COLUMNS}
+        rows={data ?? []}
+        isLoading={isLoading}
+        emptyMessage="No leave requests found."
+      />
+    </div>
   )
 }

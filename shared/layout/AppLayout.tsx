@@ -1,5 +1,6 @@
 "use client";
 
+import { ToastContainer } from "../ui/ToastContainer";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { useUiStore } from "@/store/ui.store";
@@ -25,6 +26,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Topbar />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
+      <ToastContainer />
     </div>
   );
 }

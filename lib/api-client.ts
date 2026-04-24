@@ -17,11 +17,13 @@ async function parseResponse<T>(response: Response): Promise<T> {
   if (response.status === 401) {
     // Token expired or invalid
     useAuthStore.getState().clearAuth();
-    useToastStore.getState().addToast(
-      "Your session has expired. Please log in again.",
-      "warning",
-      5000,
-    );
+    useToastStore
+      .getState()
+      .addToast(
+        "Your session has expired. Please log in again.",
+        "warning",
+        5000,
+      );
     window.location.href = "/login";
     throw new ApiClientError("Session expired", 401);
   }
@@ -40,7 +42,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
   }
 
   const json = await response.json();
-  
+
   // Debug log for invoices endpoint
   if (response.url.includes("/invoices")) {
     console.log("[API] /invoices response:", json);
@@ -106,6 +108,15 @@ export const apiClient = {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "DELETE",
       headers: buildHeaders(),
+    });
+    return parseResponse<T>(response);
+  },
+
+  async put<T>(path: string, body: unknown): Promise<T> {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "PUT",
+      headers: buildHeaders(),
+      body: JSON.stringify(body),
     });
     return parseResponse<T>(response);
   },

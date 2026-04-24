@@ -15,17 +15,15 @@ export const alertsService = {
   },
 
   async listAlertRules(params?: {
-    page?: number;
-    limit?: number;
-    is_active?: boolean;
+    metric?: string
+    severity?: string
+    isActive?: boolean
   }): Promise<PaginatedResponse<AlertRule>> {
-    return apiClient.get<PaginatedResponse<AlertRule>>("/alerts/rules", {
-      page: String(params?.page ?? 1),
-      limit: String(params?.limit ?? 20),
-      ...(params?.is_active !== undefined
-        ? { is_active: String(params.is_active) }
-        : {}),
-    });
+    const p: Record<string, string> = {}
+    if (params?.metric) p.metric = params.metric
+    if (params?.severity) p.severity = params.severity
+    if (params?.isActive !== undefined) p.isActive = String(params.isActive)
+    return apiClient.get<PaginatedResponse<AlertRule>>('/alerts/rules', p)
   },
 
   async getAlertRule(id: string): Promise<AlertRule> {
@@ -45,17 +43,17 @@ export const alertsService = {
 
   // Alert Events
   async listAlertEvents(params?: {
-    page?: number;
-    limit?: number;
-    status?: string;
-    severity?: string;
+    status?: string
+    severity?: string
+    limit?: number
+    offset?: number
   }): Promise<PaginatedResponse<AlertEvent>> {
-    return apiClient.get<PaginatedResponse<AlertEvent>>("/alerts/events", {
-      page: String(params?.page ?? 1),
-      limit: String(params?.limit ?? 20),
-      ...(params?.status ? { status: params.status } : {}),
-      ...(params?.severity ? { severity: params.severity } : {}),
-    });
+    const p: Record<string, string> = {}
+    if (params?.status) p.status = params.status
+    if (params?.severity) p.severity = params.severity
+    if (params?.limit) p.limit = String(params.limit)
+    if (params?.offset) p.offset = String(params.offset)
+    return apiClient.get<PaginatedResponse<AlertEvent>>('/alerts/events', p)
   },
 
   async getAlertEvent(id: string): Promise<AlertEvent> {
@@ -75,14 +73,13 @@ export const alertsService = {
     return apiClient.get<AlertStats>("/alerts/stats");
   },
 
-  // Open Alerts (convenience method)
   async getOpenAlerts(params?: {
-    page?: number;
-    limit?: number;
+    page?: number
+    limit?: number
   }): Promise<PaginatedResponse<AlertEvent>> {
-    return apiClient.get<PaginatedResponse<AlertEvent>>("/alerts/events/open", {
+    return apiClient.get<PaginatedResponse<AlertEvent>>('/alerts/events/open', {
       page: String(params?.page ?? 1),
       limit: String(params?.limit ?? 20),
-    });
+    })
   },
 };

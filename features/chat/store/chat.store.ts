@@ -7,7 +7,6 @@ interface ChatState {
   isAwaitingResponse: boolean;
   setSessionId: (id: string) => void;
   addMessage: (message: ChatMessage) => void;
-  appendStreamChunk: (messageId: string, chunk: string) => void;
   setIsAwaitingResponse: (isAwaiting: boolean) => void;
   clearMessages: () => void;
 }
@@ -20,13 +19,6 @@ export const useChatStore = create<ChatState>((set) => ({
   setSessionId: (id) => set({ sessionId: id }),
 
   addMessage: (message) => set((s) => ({ messages: [...s.messages, message] })),
-
-  appendStreamChunk: (messageId, chunk) =>
-    set((s) => ({
-      messages: s.messages.map((m) =>
-        m.id === messageId ? { ...m, content: m.content + chunk } : m,
-      ),
-    })),
 
   setIsAwaitingResponse: (isAwaiting) =>
     set({ isAwaitingResponse: isAwaiting }),

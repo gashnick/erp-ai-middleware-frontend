@@ -1,37 +1,26 @@
+// src/store/toast.store.ts
 import { create } from "zustand";
 
-export type ToastType = "success" | "error" | "warning" | "info";
+export type ToastVariant = "success" | "error" | "warning" | "info";
 
 export interface Toast {
   id: string;
   message: string;
-  type: ToastType;
-  duration?: number;
+  variant: ToastVariant;
 }
 
 interface ToastState {
   toasts: Toast[];
-  addToast: (message: string, type: ToastType, duration?: number) => void;
+  addToast: (message: string, variant: ToastVariant) => void;
   removeToast: (id: string) => void;
 }
 
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
-  addToast: (message, type, duration = 5000) => {
-    const id = `${Date.now()}-${Math.random()}`;
-    set((state) => ({
-      toasts: [...state.toasts, { id, message, type, duration }],
-    }));
-    if (duration > 0) {
-      setTimeout(() => {
-        set((state) => ({
-          toasts: state.toasts.filter((t) => t.id !== id),
-        }));
-      }, duration);
-    }
-  },
-  removeToast: (id) =>
-    set((state) => ({
-      toasts: state.toasts.filter((t) => t.id !== id),
+  addToast: (message, variant) =>
+    set((s) => ({
+      toasts: [...s.toasts, { id: crypto.randomUUID(), message, variant }],
     })),
+  removeToast: (id) =>
+    set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
 }));

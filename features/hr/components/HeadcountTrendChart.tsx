@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -11,32 +11,28 @@ import {
 } from "recharts";
 import { ChartCard } from "@/shared/ui/ChartCard";
 import { useIsClient } from "@/hooks/useIsClient";
-import { useHeadcount } from "../hooks/useHr";
+import { useHeadcountTrend } from "../hooks/useHr";
 
-export function HeadcountChart() {
+export function HeadcountTrendChart() {
   const isClient = useIsClient();
-  const { data, isLoading } = useHeadcount();
+  const { data, isLoading } = useHeadcountTrend(12);
 
   return (
     <ChartCard
-      title="Headcount by Department"
-      subtitle="Active vs on leave"
+      title="Headcount Trend"
+      subtitle="Last 12 months"
       isLoading={isLoading}
       height={240}
     >
       {isClient && (
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data?.byDepartment ?? []}
+          <LineChart
+            data={data ?? []}
             margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
           >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#F3F4F6"
-              vertical={false}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
             <XAxis
-              dataKey="department"
+              dataKey="period"
               tick={{ fontSize: 11, fill: "#9CA3AF" }}
               tickLine={false}
               axisLine={false}
@@ -47,22 +43,26 @@ export function HeadcountChart() {
               axisLine={false}
               allowDecimals={false}
             />
-            <Tooltip cursor={{ fill: "#F9FAFB" }} />
-            <Bar
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="total"
+              name="Total"
+              stroke="#2563EB"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+            <Line
+              type="monotone"
               dataKey="active"
               name="Active"
-              fill="#2563EB"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={40}
+              stroke="#16A34A"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
             />
-            <Bar
-              dataKey="onLeave"
-              name="On Leave"
-              fill="#F59E0B"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={40}
-            />
-          </BarChart>
+          </LineChart>
         </ResponsiveContainer>
       )}
     </ChartCard>

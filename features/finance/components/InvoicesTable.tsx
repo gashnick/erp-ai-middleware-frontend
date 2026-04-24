@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { DataTable, type DataTableColumn } from "@/shared/ui/DataTable";
 import { StatusBadge } from "@/shared/ui/StatusBadge";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDateSafe } from "@/utils/formatDate";
 import { displayEncrypted, isEncrypted } from "@/utils/encryption";
 import { useInvoices } from "../hooks/useInvoices";
+import { cn } from "@/utils/cn";
 import type { Invoice, InvoiceStatus } from "../types";
 
 const STATUS_BADGE_MAP: Record<
@@ -67,8 +69,17 @@ const COLUMNS: DataTableColumn<Invoice>[] = [
   },
 ];
 
+const STATUS_TABS: { label: string; value: InvoiceStatus | undefined }[] = [
+  { label: "All", value: undefined },
+  { label: "Paid", value: "paid" },
+  { label: "Pending", value: "pending" },
+  { label: "Overdue", value: "overdue" },
+  { label: "Draft", value: "draft" },
+];
+
 export function InvoicesTable() {
-  const { data, isLoading } = useInvoices({ limit: 10 });
+  const [activeStatus, setActiveStatus] = useState<InvoiceStatus | undefined>();
+  const { data, isLoading } = useInvoices({ limit: 10, status: activeStatus });
   
   // Handle both array and paginated response formats
   const invoices = Array.isArray(data) ? data : data?.data ?? [];
@@ -88,11 +99,30 @@ export function InvoicesTable() {
   console.log("=========================");
 
   return (
-    <DataTable<Invoice>
-      columns={COLUMNS}
-      rows={invoices}
-      isLoading={isLoading}
-      emptyMessage="No invoices found."
-    />
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-1 border-b border-gray-200">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={String(tab.value)}
+            type="button"
+            onClick={() => setActiveStatus(tab.value)}
+            className={cn(
+              "px-3 py-2 text-sm font-medium transition-colors border-b-2 -mb-px",
+              activeStatus === tab.value
+                ? "border-blue-600 text-blue-700"
+                : "border-transparent text-gray-500 hover:text-gray-900",
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <DataTable<Invoice>
+        columns={COLUMNS}
+        rows={invoices}
+        isLoading={isLoading}
+        emptyMessage="No invoices found."
+      />
+    </div>
   );
 }

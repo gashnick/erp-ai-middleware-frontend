@@ -3,7 +3,9 @@ export type EntityType =
   | "contact"
   | "expense"
   | "bank_transaction"
-  | "product";
+  | "product"
+  | "employee"
+  | "asset";
 
 export type JobStatus = "processing" | "completed" | "failed";
 
@@ -100,5 +102,35 @@ export const ENTITY_TYPE_CONFIG: Record<EntityType, EntityTypeConfig> = {
     description: "Product and inventory catalog",
     expectedHeaders: ["name", "sku", "price", "currency", "category"],
     icon: "📦",
+  },
+  employee: {
+    label: "Employees",
+    description: "Employee records and payroll",
+    expectedHeaders: [
+      "external_id",
+      "name",
+      "department",
+      "role",
+      "status",
+      "start_date",
+      "salary",
+      "currency",
+    ],
+    icon: "👥",
+  },
+  asset: {
+    label: "Assets",
+    description: "Infrastructure, fleet, warehouse and facilities assets",
+    expectedHeaders: [
+      "external_id",
+      "name",
+      "category",
+      "status",
+      "uptime_pct",
+      "last_service",
+      "next_service",
+      "metadata",
+    ],
+    icon: "⚙️",
   },
 };

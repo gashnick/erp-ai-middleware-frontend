@@ -1,41 +1,42 @@
-import { apiClient } from '@/lib/api-client'
-import type { PaginatedResponse } from '@/types/api.types'
-import type { OpsKpis, Order, Task } from '../types'
+import { apiClient } from "@/lib/api-client";
+import type {
+  Asset,
+  AssetFilters,
+  CreateSlaConfigDto,
+  InventorySummary,
+  OrdersPipeline,
+  SlaConfig,
+  SlaStatusItem,
+  SlaStatusResult,
+} from "../types";
 
 export const opsService = {
-  async getKpis(): Promise<OpsKpis> {
-    return apiClient.get<OpsKpis>('/ops/dashboard/kpis')
+  async getInventorySummary(): Promise<InventorySummary> {
+    return apiClient.get<InventorySummary>("/ops/inventory/summary");
   },
 
-  async getOrders(params?: {
-    page?: number
-    limit?: number
-    status?: string
-    search?: string
-  }): Promise<PaginatedResponse<Order>> {
-    return apiClient.get<PaginatedResponse<Order>>('/ops/orders', {
-      page: String(params?.page ?? 1),
-      limit: String(params?.limit ?? 20),
-      ...(params?.status ? { status: params.status } : {}),
-      ...(params?.search ? { search: params.search } : {}),
-    })
+  async getAssets(filters?: AssetFilters): Promise<Asset[]> {
+    const params: Record<string, string> = {};
+    if (filters?.category) params.category = filters.category;
+    if (filters?.status) params.status = filters.status;
+    if (filters?.limit) params.limit = String(filters.limit);
+    if (filters?.offset) params.offset = String(filters.offset);
+    return apiClient.get<Asset[]>("/ops/assets", params);
   },
 
-  async getTasks(params?: {
-    page?: number
-    limit?: number
-    status?: string
-    priority?: string
-  }): Promise<PaginatedResponse<Task>> {
-    return apiClient.get<PaginatedResponse<Task>>('/ops/tasks', {
-      page: String(params?.page ?? 1),
-      limit: String(params?.limit ?? 20),
-      ...(params?.status ? { status: params.status } : {}),
-      ...(params?.priority ? { priority: params.priority } : {}),
-    })
+  async getOrdersPipeline(): Promise<OrdersPipeline> {
+    return apiClient.get<OrdersPipeline>("/ops/orders/pipeline");
   },
 
-  async updateOrderStatus(id: string, status: string): Promise<Order> {
-    return apiClient.patch<Order>(`/ops/orders/${id}/status`, { status })
+  async getSlaStatus(): Promise<SlaStatusResult> {
+    return apiClient.get<SlaStatusResult>("/ops/sla/status");
   },
-}
+
+  async getSlaBreaches(): Promise<SlaStatusItem[]> {
+    return apiClient.get<SlaStatusItem[]>("/ops/sla/breaches");
+  },
+
+  async createSlaConfig(dto: CreateSlaConfigDto): Promise<SlaConfig> {
+    return apiClient.post<SlaConfig>("/ops/sla/configs", dto);
+  },
+};

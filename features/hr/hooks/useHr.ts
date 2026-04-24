@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { hrService } from '../services/hr.service'
-import type { EmploymentStatus } from '../types'
+import type { Employee, EmployeeStatus, HeadcountSummary } from '../types'
 
 export function useHrKpis() {
   return useQuery({
@@ -14,24 +13,16 @@ export function useHrKpis() {
 export function useEmployees(params?: {
   limit?: number
   department?: string
-  status?: EmploymentStatus
+  status?: EmployeeStatus
   search?: string
 }) {
-  const [page, setPage] = useState(1)
-
   const query = useQuery({
-    queryKey: ['hr', 'employees', { page, ...params }],
-    queryFn: () => hrService.getEmployees({ page, ...params }),
+    queryKey: ['hr', 'employees', params],
+    queryFn: () => hrService.getEmployees(params),
     staleTime: 15_000,
-    placeholderData: (prev) => prev,
   })
 
-  return {
-    ...query,
-    page,
-    setPage,
-    totalPages: query.data?.totalPages ?? 1,
-  }
+  return query
 }
 
 export function useDepartments() {
@@ -45,7 +36,15 @@ export function useDepartments() {
 export function useLeaveRequests(status?: string) {
   return useQuery({
     queryKey: ['hr', 'leave-requests', status],
-    queryFn: () => hrService.getLeaveRequests({ status }),
+    queryFn: () => hrService.listLeaveRequests({ status }),
     staleTime: 15_000,
+  })
+}
+
+export function useHeadcount() {
+  return useQuery({
+    queryKey: ['hr', 'headcount'],
+    queryFn: () => hrService.getHeadcount(),
+    staleTime: 30_000,
   })
 }
