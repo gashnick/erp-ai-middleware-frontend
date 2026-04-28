@@ -14,6 +14,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
+  Lightbulb,
+  CreditCard,
+  FileText,
 } from "lucide-react";
 import { useUiStore } from "@/store/ui.store";
 import { cn } from "@/utils/cn";
@@ -30,9 +33,12 @@ const NAV_ITEMS: NavItem[] = [
   { label: "HR", href: "/hr", icon: Users },
   { label: "Operations", href: "/ops", icon: Briefcase },
   { label: "Import Data", href: "/import", icon: Upload },
+  { label: "Reports", href: "/reports", icon: FileText },
   { label: "Alerts", href: "/alerts", icon: Bell },
+  { label: "Insights", href: "/insights", icon: Lightbulb },
   { label: "Quarantine", href: "/quarantine", icon: ShieldAlert },
   { label: "AI Chat", href: "/chat", icon: MessageSquare },
+  { label: "Subscription", href: "/subscription", icon: CreditCard },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
